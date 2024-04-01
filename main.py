@@ -35,6 +35,8 @@ while running:
         screen.blit(ground,(ground_x, screen_size[1] - 112))
     else:
         ground_x = 0 #reset position
+        screen.blit(ground,(ground_x, screen_size[1] - 112))
+
         
 
 
