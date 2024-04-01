@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from pygame.sprite import *
 
 pygame.init()
 
@@ -18,6 +19,22 @@ ground = pygame.image.load("assets/sprites/base.png") #336 x 112
 ground_x = 0
 scroll_speed = 130
 
+class Bird(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.images = []
+        self.index = 0
+        for i in range(1,4):
+            self.images.append(pygame.image.load(f"assets/sprites/yellowbird-{i}.png"))
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+
+    def update(self):
+        pygame.sprite.Sprite.update(self)
+        
+sprite_group = pygame.sprite.Group()
+sprite_group.add(Bird(0,0))
+
 running = True
 while running:
 
@@ -29,6 +46,10 @@ while running:
 
     screen.blit(bg_day,(0,0))
     
+
+    sprite_group.draw(screen)
+    sprite_group.update()
+
     #scrolling
     if abs(ground_x) <= abs(ground.get_width() - screen_size[0]):
         ground_x -= scroll_speed * delta_time
@@ -36,9 +57,6 @@ while running:
     else:
         ground_x = 0 #reset position
         screen.blit(ground,(ground_x, screen_size[1] - 112))
-
-        
-
 
     pygame.display.flip()
 
