@@ -23,23 +23,33 @@ scroll_speed = 130
 class Physics2D:
     x = 0
     y = 0
-    gravity = 1
-    friciton = 0.1
+    gravity = 7
+    friction = 0.1
     vel_x = 0
     vel_y = 0
-
+    
+    is_kinematic = False
+    has_gravity = True
+    
     def __init__(self) -> None:
         pass
-    def update(self):
-        self.x += self.vel_x
-        self.y += self.vel_y -self.gravity
-        #add friction
-        vel_x = (-signum(self.vel_x)) * self.friction
-        vel_y = (-signum(self.vel_y)) * self.friction
-        pass
-    def addforce(force_x, force_y):
-        vel_x += force_x
-        vel_y += force_y
+    def update(self, delta_time):
+        if (self.is_kinematic == False):
+            #add friction
+            self.vel_x = self.vel_x + (-signum(self.vel_x)) * self.friction
+            self.vel_y = self.vel_y + (-signum(self.vel_y)) * self.friction
+
+            #other forces
+            if (self.has_gravity == True):
+                self.vel_y = self.vel_y + self.gravity
+
+            #add velocity
+            self.x += self.vel_x * delta_time
+            self.y += self.vel_y * delta_time
+            
+    def addforce(self, force_x, force_y):
+        self.vel_x += force_x
+        self.vel_y += force_y
 
 def signum(x):
     if x < 0:
@@ -72,25 +82,26 @@ class BirdSprite(pygame.sprite.Sprite):
 
 
 class Player:
-    x = 0
-    y = 0
+    phy2D = Physics2D()
+    #x = 0
+    #y = 0
 
     def __init__(self, sprite_group):
         self.sprite = BirdSprite(0,0, sprite_group)
-        self.sprite.change_position(self.x,self.y)
-        pass
+        self.sprite.change_position(self.phy2D.x, self.phy2D.y)
+        
 
-    def update(self):
-        #self.sprite.change_position(self.x, self.y)
-        self.sprite.rect.x = self.x
-        self.sprite.rect.y = self.y
+    def update(self, delta_time):
+        self.phy2D.update(delta_time)
+        self.sprite.change_position(self.phy2D.x, self.phy2D.y) 
         self.sprite.update()
+        
     
-    def change_position(self, x, y):
-        self.x = x
-        self.y = y
-        self.sprite.rect.x = x
-        self.sprite.rect.x = y
+    # def change_position(self, x, y):
+    #     self.x = x
+    #     self.y = y
+    #     self.sprite.rect.x = x
+    #     self.sprite.rect.x = y
 
 
 sprite_group = pygame.sprite.Group() #for rendering sprites
@@ -104,6 +115,9 @@ while running:
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
+        elif event.type == MOUSEBUTTONDOWN:
+            pl.phy2D.vel_y = 0
+            pl.phy2D.addforce(0,-200)
 
     screen.blit(bg_day,(0,0))
   
@@ -117,8 +131,8 @@ while running:
         screen.blit(ground,(ground_x, screen_size[1] - 112))
 
     #update
-    pl.y += 10 * delta_time
-    pl.update()
+    #pl.phy2D.y += 10 * delta_time
+    pl.update(delta_time)
     sprite_group.update()
 
 
