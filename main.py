@@ -23,7 +23,7 @@ scroll_speed = 130
 class Physics2D:
     x = 0
     y = 0
-    gravity = 7
+    gravity = 9
     friction = 0.1
     vel_x = 0
     vel_y = 0
@@ -68,7 +68,7 @@ class BirdSprite(pygame.sprite.Sprite):
             self.images.append(pygame.image.load(f"assets/sprites/yellowbird-{i}.png"))
         self.image = self.images[0]
         self.rect = self.image.get_rect()
-        self.rect.center = [x, y]
+        self.rect.center = screen.get_rect().center #[x, y]
 
         if (sprite_group != None):
             sprite_group.add(self)
@@ -77,8 +77,8 @@ class BirdSprite(pygame.sprite.Sprite):
         pygame.sprite.Sprite.update(self)
 
     def change_position(self, x, y):
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = x-self.rect.width/2
+        self.rect.y = y-self.rect.height/2
 
 
 class Player:
@@ -117,7 +117,7 @@ while running:
             running = False
         elif event.type == MOUSEBUTTONDOWN:
             pl.phy2D.vel_y = 0
-            pl.phy2D.addforce(0,-200)
+            pl.phy2D.addforce(0,-250)
 
     screen.blit(bg_day,(0,0))
   
@@ -132,6 +132,7 @@ while running:
 
     #update
     #pl.phy2D.y += 10 * delta_time
+    pl.phy2D.x = screen_size[0]/2
     pl.update(delta_time)
     sprite_group.update()
 
