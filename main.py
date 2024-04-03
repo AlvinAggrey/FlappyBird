@@ -79,12 +79,77 @@ class BirdSprite(pygame.sprite.Sprite):
     def change_position(self, x, y):
         self.rect.x = x-self.rect.width/2
         self.rect.y = y-self.rect.height/2
+class BirdSprite(pygame.sprite.Sprite):
+    def __init__(self, x = 0 , y = 0 , sprite_group: pygame.sprite.Group = None):
+        pygame.sprite.Sprite.__init__(self)
+        self.images = []
+        self.index = 0
+        for i in range(1,4):
+            self.images.append(pygame.image.load(f"assets/sprites/yellowbird-{i}.png"))
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        self.rect.center = screen.get_rect().center #[x, y]
 
+        if (sprite_group != None):
+            sprite_group.add(self)
 
+    def update(self):
+        pygame.sprite.Sprite.update(self)
+
+    def change_position(self, x, y):
+        self.rect.x = x-self.rect.width/2
+        self.rect.y = y-self.rect.height/2
+
+class BirdSprite(pygame.sprite.Sprite):
+    def __init__(self, x = 0 , y = 0 , sprite_group: pygame.sprite.Group = None):
+        pygame.sprite.Sprite.__init__(self)
+        self.images = []
+        self.index = 0
+        for i in range(1,4):
+            self.images.append(pygame.image.load(f"assets/sprites/yellowbird-{i}.png"))
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        self.rect.center = screen.get_rect().center #[x, y]
+
+        if (sprite_group != None):
+            sprite_group.add(self)
+
+    def update(self):
+        pygame.sprite.Sprite.update(self)
+        fps = 60
+        #= 1/fps
+
+    def change_position(self, x, y):
+        self.rect.x = x-self.rect.width/2
+        self.rect.y = y-self.rect.height/2
+
+# class Pipe():
+#     pygame.sprite.Sprite
+#     def __init__(self) -> None:
+#         pass
+class Animator:
+    game_sprite: pygame.sprite.Sprite
+    
+    anim_fps = 60
+    anim_frame = 0
+    def __init__(self) -> None:
+        self.lastframe = frame_count
+        pass
+    def play(self):
+        self.lastframe = frame_count
+
+    def stop(self):
+        self.lastframe = 0
+
+    def update(self):
+        frame_diff = frame_count - self.lastframe
+        if (frame_diff > self.anim_fps):
+            self.anim_frame += frame_diff/self.anim_fps
+        else:
+            self.anim_frame += frame_diff 
+        frame_count = 0
 class Player:
     phy2D = Physics2D()
-    #x = 0
-    #y = 0
 
     def __init__(self, sprite_group):
         self.sprite = BirdSprite(0,0, sprite_group)
@@ -95,20 +160,13 @@ class Player:
         self.phy2D.update(delta_time)
         self.sprite.change_position(self.phy2D.x, self.phy2D.y) 
         self.sprite.update()
-        
-    
-    # def change_position(self, x, y):
-    #     self.x = x
-    #     self.y = y
-    #     self.sprite.rect.x = x
-    #     self.sprite.rect.x = y
-
-
+#kgame_speed = 2 # 2 times frame
+frame_count = 0 #frame since the beginnging
 sprite_group = pygame.sprite.Group() #for rendering sprites
 pl = Player(sprite_group)
 running = True
 while running:
-
+    
     delta_time = clock.get_time() / 1000.0
 
     #events
@@ -121,7 +179,8 @@ while running:
 
     screen.blit(bg_day,(0,0))
   
-
+    #frame
+    frame_count += 1
     #scrolling
     if abs(ground_x) <= abs(ground.get_width() - screen_size[0]):
         ground_x -= scroll_speed * delta_time
@@ -144,6 +203,7 @@ while running:
 
     #cap frame rate at fps
     clock.tick(kFPS)
+    clock.get_fps()
     
 
 pygame.quit()
