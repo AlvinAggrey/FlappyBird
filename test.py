@@ -38,20 +38,20 @@ class GameSprite(pygame.sprite.Sprite):
 class Animation:
     frames = []
     files = []
-    def __init__(self, files) -> None:
-        for file in files:
+    def __init__(self, paths) -> None:
+        self.files = paths
+        for file in paths:
             self.frames.append(pygame.image.load(file))
 
 class Animator():
     paused = False
     anim:Animation
     game_sprite: GameSprite
-    fps:60
+    fps:60 # duration of animation
     speed:1
     frame_index = 0
     anim_frames_passed = 0
     last_frame = 0
-    duration = 1 #seconds
     frame_index = 0
     
     def __init__(self) -> None:
@@ -100,21 +100,24 @@ screen = pygame.display.set_mode((640, 480))
 speed = 5  # Normal speed
 speed *= 1.5  # Increase speed by 1.5 times
 
-#files = os.listdir(".\\assets\\sprites\\Bird")
-files = []
-for file in os.listdir(".\\assets\\sprites\\Bird"):
-    files.append(".\\assets\\sprites\\Bird\\" + file)
+def get_pathsdir(dir = ".\\") -> str:
+    paths = []
+    for file in os.listdir(dir):
+        paths.append(dir + "\\" + file)
+    return paths
+
 
 files.sort()
 anim = Animation(files)
 animator = Animator()
-animator.load_anim(anim,10,0.1)
+animator.load_anim(anim,600,1)
 sprite = GameSprite(".\\assets\\sprites\\Bird\\0.png")
 
 #sprite = 
 animator.game_sprite = sprite
 sprite_group = pygame.sprite.Group()
 sprite_group.add(animator.game_sprite)
+clock = pygame.time.Clock()
 # Main game loop
 running = True
 while running:
@@ -132,7 +135,7 @@ while running:
                 animator.paused = False
             elif animator.paused == False:
                 animator.paused = True
-
+    clock.tick(60)
     pygame.display.flip()
 
 # Quit Pygame
