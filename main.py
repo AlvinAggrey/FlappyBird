@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 from pygame.sprite import *
 
+import gamesprite
+
 pygame.init()
 
 # Create a clock object to control the frame rate
@@ -59,70 +61,6 @@ def signum(x):
     else:
         return 1
 
-class BirdSprite(pygame.sprite.Sprite):
-    def __init__(self, x = 0 , y = 0 , sprite_group: pygame.sprite.Group = None):
-        pygame.sprite.Sprite.__init__(self)
-        self.images = []
-        self.index = 0
-        for i in range(1,4):
-            self.images.append(pygame.image.load(f"assets/sprites/yellowbird-{i}.png"))
-        self.image = self.images[0]
-        self.rect = self.image.get_rect()
-        self.rect.center = screen.get_rect().center #[x, y]
-
-        if (sprite_group != None):
-            sprite_group.add(self)
-
-    def update(self):
-        pygame.sprite.Sprite.update(self)
-
-    def change_position(self, x, y):
-        self.rect.x = x-self.rect.width/2
-        self.rect.y = y-self.rect.height/2
-class BirdSprite(pygame.sprite.Sprite):
-    def __init__(self, x = 0 , y = 0 , sprite_group: pygame.sprite.Group = None):
-        pygame.sprite.Sprite.__init__(self)
-        self.images = []
-        self.index = 0
-        for i in range(1,4):
-            self.images.append(pygame.image.load(f"assets/sprites/yellowbird-{i}.png"))
-        self.image = self.images[0]
-        self.rect = self.image.get_rect()
-        self.rect.center = screen.get_rect().center #[x, y]
-
-        if (sprite_group != None):
-            sprite_group.add(self)
-
-    def update(self):
-        pygame.sprite.Sprite.update(self)
-
-    def change_position(self, x, y):
-        self.rect.x = x-self.rect.width/2
-        self.rect.y = y-self.rect.height/2
-
-class BirdSprite(pygame.sprite.Sprite):
-    def __init__(self, x = 0 , y = 0 , sprite_group: pygame.sprite.Group = None):
-        pygame.sprite.Sprite.__init__(self)
-        self.images = []
-        self.index = 0
-        for i in range(1,4):
-            self.images.append(pygame.image.load(f"assets/sprites/yellowbird-{i}.png"))
-        self.image = self.images[0]
-        self.rect = self.image.get_rect()
-        self.rect.center = screen.get_rect().center #[x, y]
-
-        if (sprite_group != None):
-            sprite_group.add(self)
-
-    def update(self):
-        pygame.sprite.Sprite.update(self)
-        fps = 60
-        #= 1/fps
-
-    def change_position(self, x, y):
-        self.rect.x = x-self.rect.width/2
-        self.rect.y = y-self.rect.height/2
-
 def get_pathsdir(dir = ".\\") -> str:
     paths = []
     for file in os.listdir(dir):
@@ -134,62 +72,10 @@ def get_pathsdir(dir = ".\\") -> str:
 #         pass
 frame_count = 0
 
-class GameSprite(pygame.sprite.Sprite):
-    def __init__(self, image_path):
-        super().__init__()
-        self.image = pygame.image.load(image_path)
-        self.rect = self.image.get_rect()
+class BirdSprite(gamesprite.GameSprite):
+    def __init__(self, x = 0 , y = 0 , sprite_group: pygame.sprite.Group = None):
+        super().__init__(f"assets/sprites/yellowbird-0.png", x, y, sprite_group)
 
-class Animation:
-    frames = []
-    files = []
-    def __init__(self, paths) -> None:
-        self.files = paths
-        for file in paths:
-            self.frames.append(pygame.image.load(file))
-
-class Animator():
-    paused = False
-    anim:Animation
-    game_sprite: GameSprite
-    fps:60 # duration of animation
-    speed:1
-    frame_index = 0
-    anim_frames_passed = 0
-    last_frame = 0
-    frame_index = 0
-    
-    def __init__(self) -> None:
-        pass
-
-    def play(self):
-        paused = False
-
-    def stop(self):
-        pause = True
-
-    def load_anim(self, anim:Animation, fps=60, speed=1):
-        self.anim = anim
-        self.fps = fps
-        self.speed = speed
-        self.game_sprite = self.anim.frames[0]
-
-    def change_speed(self, speed=1):
-        self.speed = speed
-
-    def update(self):
-        if self.paused == False:
-            self.anim_frames_passed += (frame_count - self.last_frame)* self.speed # change animation speed
-
-        if self.anim_frames_passed >= self.fps:
-            self.anim_frames_passed -= (self.anim_frames_passed / self.fps) * self.fps
-        
-        anim_timeslice = self.fps/len(self.anim.frames)
-        self.frame_index = int(self.anim_frames_passed / anim_timeslice)
-        print(self.frame_index)
-        self.game_sprite.image = self.anim.frames[self.frame_index]
-        self.last_frame = frame_count
-        
 class Player:
     phy2D = Physics2D()
 
@@ -202,6 +88,7 @@ class Player:
         self.phy2D.update(delta_time)
         self.sprite.change_position(self.phy2D.x, self.phy2D.y) 
         self.sprite.update()
+
 #kgame_speed = 2 # 2 times frame
 frame_count = 0 #frame since the beginnging
 sprite_group = pygame.sprite.Group() #for rendering sprites
